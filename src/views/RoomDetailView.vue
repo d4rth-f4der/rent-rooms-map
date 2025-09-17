@@ -18,18 +18,23 @@ function back() {
 </script>
 
 <template>
-  <div class="container mx-auto p-4 space-y-4">
-    <button class="text-blue-600 hover:underline" @click="back">← Назад до списку</button>
-    <div v-if="room" class="grid gap-4 md:grid-cols-2">
-      <div class="space-y-2">
+  <div class="container mx-auto p-4 space-y-3">
+    <button
+      class="relative px-3 py-1.5 rounded-full text-sm font-medium text-gray-700 hover:text-gray-900 border border-transparent hover:border-gray-300 hover:shadow-sm transition"
+      @click="back"
+    >
+      ← Назад до списку
+    </button>
+    <div v-if="room" class="grid gap-4 md:grid-cols-5">
+      <div class="space-y-2 md:col-span-2">
         <h1 class="text-2xl font-bold">{{ room.name }}</h1>
         <p class="text-gray-600">{{ room.location }}</p>
         <div class="flex gap-4 text-lg">
           <div><span class="font-semibold">Ціна:</span> ${{ room.price }}</div>
         </div>
-        <p class="text-gray-700">{{ room.description }}</p>
+        <p class="text-gray-800 text-lg md:text-xl leading-loose">{{ room.description }}</p>
       </div>
-      <div class="min-h-[400px]">
+      <div class="min-h-[460px] md:col-span-3">
         <MapView :rooms="[room]" />
       </div>
     </div>
