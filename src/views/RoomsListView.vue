@@ -34,13 +34,13 @@ function onMarkerSelect(id: string) {
 </script>
 
 <template>
-  <div class="container mx-auto p-4 space-y-4">
+  <div class="container mx-auto p-3 space-y-3">
     <h1 class="text-2xl font-bold">Список об'єктів оренди</h1>
 
     <SearchBar v-model="query" />
 
-    <div class="grid gap-4 md:grid-cols-2">
-      <div class="space-y-3">
+    <div class="grid gap-3 md:grid-cols-2">
+      <div class="space-y-2">
         <RoomCard
           v-for="r in rooms"
           :key="r.id"
@@ -51,7 +51,7 @@ function onMarkerSelect(id: string) {
         <p v-if="rooms.length === 0" class="text-sm text-gray-600">Нічого не знайдено.</p>
         <Pagination :current="page" :total="totalPages" @change="changePage" />
       </div>
-      <div class="min-h-[400px]">
+      <div class="min-h-[320px] sm:min-h-[340px] md:min-h-[360px]">
         <MapView
           :rooms="store.filteredRooms"
           :hovered-id="hoveredId"

@@ -10,7 +10,7 @@ function to(page: number) {
 </script>
 
 <template>
-  <div class="flex items-center gap-2 mt-2" v-if="total > 1">
+  <div class="flex items-center gap-1.5 mt-1" v-if="total > 1">
     <button class="px-3 py-1 rounded border hover:bg-gray-50 cursor-pointer disabled:cursor-not-allowed disabled:opacity-50 transition-colors" @click="to(current - 1)" :disabled="current === 1">
       « Попередня
     </button>

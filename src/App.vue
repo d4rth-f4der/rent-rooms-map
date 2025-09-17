@@ -3,7 +3,7 @@
 <template>
   <div class="min-h-screen bg-gray-50 text-gray-900">
     <header class="bg-white border-b">
-      <div class="container mx-auto p-4 flex items-center justify-between">
+      <div class="container mx-auto p-3 flex items-center justify-between">
         <h1 class="text-2xl md:text-3xl font-bold tracking-tight">Оренда приміщень</h1>
         <nav class="flex gap-2">
           <RouterLink
@@ -23,7 +23,7 @@
         </nav>
       </div>
     </header>
-    <main class="py-4">
+    <main class="py-3">
       <RouterView />
     </main>
   </div>
