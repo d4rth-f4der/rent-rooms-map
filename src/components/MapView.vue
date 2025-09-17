@@ -32,7 +32,7 @@ function addMarkers() {
   for (const r of props.rooms) {
     const marker = new maplibregl.Marker()
       .setLngLat(r.geometry.coordinates as [number, number])
-      .setPopup(new maplibregl.Popup({ offset: 16 }).setHTML(`<strong>${r.name}</strong><br/>${r.location}`))
+      .setPopup(new maplibregl.Popup({ offset: 16, closeButton: false }).setHTML(`<strong>${r.name}</strong><br/>${r.location}`))
       .addTo(map)
 
     const el = marker.getElement()
@@ -177,4 +177,12 @@ watch(
 <style scoped>
 :global(.maplibregl-ctrl)
 { font-size: 12px; }
+
+/* Hide the default close (x) on popups */
+:global(.maplibregl-popup-close-button)
+{ display: none !important; }
+
+/* Make popup content padding a bit tighter vertically */
+:global(.maplibregl-popup-content)
+{ padding: 6px 10px; line-height: 1.25; }
 </style>
