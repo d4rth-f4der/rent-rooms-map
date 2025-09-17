@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted, onBeforeUnmount, ref, watch, computed } from 'vue'
+import { onMounted, onBeforeUnmount, ref, watch, computed, nextTick } from 'vue'
 import type { Room } from '@/stores/rooms'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
@@ -15,6 +15,8 @@ let map: maplibregl.Map | null = null
 const markers: maplibregl.Marker[] = []
 const markerById: Record<string, maplibregl.Marker> = {}
 const internalHoveredId = ref<string | null>(null)
+let ro: ResizeObserver | null = null
+let resizeHandler: (() => void) | null = null
 
 const coords = computed(() => props.rooms.map(r => r.geometry.coordinates))
 
@@ -78,8 +80,10 @@ function fitToMarkers() {
   } catch {}
 }
 
-onMounted(() => {
+onMounted(async () => {
   if (!container.value) return
+  // Ensure DOM has laid out before initializing map
+  await nextTick()
   map = new maplibregl.Map({
     container: container.value,
     style: {
@@ -108,13 +112,32 @@ onMounted(() => {
   map.on('load', () => {
     addMarkers()
     fitToMarkers()
+    // Nudge map to recalc layout after styles/fonts load
+    setTimeout(() => map?.resize(), 0)
   })
+
+  // Resize handling: window resize and container size changes
+  const resizeMap = () => {
+    try { map?.resize() } catch {}
+  }
+  resizeHandler = resizeMap
+  window.addEventListener('resize', resizeHandler)
+  ro = new ResizeObserver(() => resizeHandler && resizeHandler())
+  ro.observe(container.value)
 })
 
 onBeforeUnmount(() => {
   clearMarkers()
   map?.remove()
   map = null
+  if (ro) {
+    ro.disconnect()
+    ro = null
+  }
+  if (resizeHandler) {
+    window.removeEventListener('resize', resizeHandler)
+    resizeHandler = null
+  }
 })
 
 watch(coords, () => {
