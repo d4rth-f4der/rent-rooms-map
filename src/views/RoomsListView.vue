@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { onMounted, computed } from 'vue'
+import { onMounted, computed, ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useRoomsStore } from '@/stores/rooms'
 import SearchBar from '@/components/SearchBar.vue'
 import Pagination from '@/components/Pagination.vue'
@@ -7,6 +8,8 @@ import RoomCard from '@/components/RoomCard.vue'
 import MapView from '@/components/MapView.vue'
 
 const store = useRoomsStore()
+const router = useRouter()
+const hoveredId = ref<string | null>(null)
 
 onMounted(() => {
   store.loadMockData()
@@ -23,6 +26,11 @@ const query = computed({
 function changePage(p: number) {
   store.setPage(p)
 }
+
+function onMarkerSelect(id: string) {
+  router.push({ name: 'property-detail', params: { id } })
+}
+
 </script>
 
 <template>
@@ -33,12 +41,22 @@ function changePage(p: number) {
 
     <div class="grid gap-4 md:grid-cols-2">
       <div class="space-y-3">
-        <RoomCard v-for="r in rooms" :key="r.id" :room="r" :query="query" />
+        <RoomCard
+          v-for="r in rooms"
+          :key="r.id"
+          :room="r"
+          :query="query"
+          @hover="hoveredId = $event"
+        />
         <p v-if="rooms.length === 0" class="text-sm text-gray-600">Нічого не знайдено.</p>
         <Pagination :current="page" :total="totalPages" @change="changePage" />
       </div>
       <div class="min-h-[400px]">
-        <MapView :rooms="store.filteredRooms" />
+        <MapView
+          :rooms="store.filteredRooms"
+          :hovered-id="hoveredId"
+          @select="onMarkerSelect"
+        />
       </div>
     </div>
   </div>

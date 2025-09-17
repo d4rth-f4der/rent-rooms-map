@@ -4,18 +4,24 @@ import type { Room } from '@/stores/rooms'
 import maplibregl from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 
-const props = defineProps<{ rooms: Room[] }>()
-const emit = defineEmits<{ (e: 'select', id: string): void }>()
+const props = defineProps<{ rooms: Room[]; hoveredId?: string | null }>()
+const emit = defineEmits<{
+  (e: 'select', id: string): void
+  (e: 'hover-marker', id: string | null): void
+}>()
 
 const container = ref<HTMLDivElement | null>(null)
 let map: maplibregl.Map | null = null
 const markers: maplibregl.Marker[] = []
+const markerById: Record<string, maplibregl.Marker> = {}
+const internalHoveredId = ref<string | null>(null)
 
 const coords = computed(() => props.rooms.map(r => r.geometry.coordinates))
 
 function clearMarkers() {
   markers.forEach(m => m.remove())
   markers.length = 0
+  Object.keys(markerById).forEach(k => delete markerById[k])
 }
 
 function addMarkers() {
@@ -24,7 +30,7 @@ function addMarkers() {
   for (const r of props.rooms) {
     const marker = new maplibregl.Marker()
       .setLngLat(r.geometry.coordinates as [number, number])
-      .setPopup(new maplibregl.Popup({ offset: 16 }).setText(r.name))
+      .setPopup(new maplibregl.Popup({ offset: 16 }).setHTML(`<strong>${r.name}</strong><br/>${r.location}`))
       .addTo(map)
 
     const el = marker.getElement()
@@ -42,12 +48,24 @@ function addMarkers() {
     )
     el.addEventListener('mouseenter', () => {
       if (map) map.getCanvas().style.cursor = 'pointer'
+      // Track internal hover and open popup
+      internalHoveredId.value = r.id
+      updatePopups()
+      emit('hover-marker', r.id)
     })
     el.addEventListener('mouseleave', () => {
       if (map) map.getCanvas().style.cursor = ''
+      // Clear internal hover only if leaving this marker
+      if (internalHoveredId.value === r.id) internalHoveredId.value = null
+      updatePopups()
+      emit('hover-marker', null)
     })
-    el.addEventListener('click', () => emit('select', r.id))
+    el.addEventListener('click', () => {
+      emit('hover-marker', r.id)
+      emit('select', r.id)
+    })
     markers.push(marker)
+    markerById[r.id] = marker
   }
 }
 
@@ -104,6 +122,29 @@ watch(coords, () => {
   addMarkers()
   fitToMarkers()
 })
+
+// Helper to sync popups based on effective hover (list or marker)
+function updatePopups() {
+  const effectiveId = props.hoveredId ?? internalHoveredId.value
+  for (const m of markers) {
+    const p = m.getPopup()
+    if (p && p.isOpen()) p.remove()
+  }
+  if (!effectiveId) return
+  const m = markerById[effectiveId]
+  if (m) {
+    const p = m.getPopup()
+    if (p) m.togglePopup()
+  }
+}
+
+// React to list hover changes
+watch(
+  () => props.hoveredId,
+  () => {
+    updatePopups()
+  }
+)
 </script>
 
 <template>

@@ -3,6 +3,7 @@ import { useRouter } from 'vue-router'
 import type { Room } from '@/stores/rooms'
 
 const props = defineProps<{ room: Room; query?: string }>()
+const emit = defineEmits<{ (e: 'hover', id: string | null): void }>()
 const router = useRouter()
 
 function openDetail() {
@@ -34,8 +35,11 @@ function highlight(text: string, query?: string): string {
 
 <template>
   <div
+    :id="`room-card-${room.id}`"
     class="rounded-lg border p-4 shadow-sm hover:shadow-md transition cursor-pointer bg-white"
     @click="openDetail"
+    @mouseenter="emit('hover', room.id)"
+    @mouseleave="emit('hover', null)"
   >
     <div class="flex items-start justify-between gap-3">
       <div>
