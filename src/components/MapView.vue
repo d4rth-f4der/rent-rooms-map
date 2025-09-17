@@ -44,7 +44,25 @@ onMounted(() => {
   if (!container.value) return
   map = new maplibregl.Map({
     container: container.value,
-    style: 'https://demotiles.maplibre.org/style.json',
+    style: {
+      version: 8,
+      sources: {
+        osm: {
+          type: 'raster',
+          tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'],
+          tileSize: 256,
+          attribution:
+            '© <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a> contributors',
+        },
+      },
+      layers: [
+        {
+          id: 'osm',
+          type: 'raster',
+          source: 'osm',
+        },
+      ],
+    },
     center: (props.rooms[0]?.geometry.coordinates as [number, number]) ?? [30.5234, 50.4501],
     zoom: 12,
   })
