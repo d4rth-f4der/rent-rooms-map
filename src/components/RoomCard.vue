@@ -6,7 +6,7 @@ const props = defineProps<{ room: Room }>()
 const router = useRouter()
 
 function openDetail() {
-  router.push({ name: 'room-detail', params: { id: props.room.id } })
+  router.push({ name: 'property-detail', params: { id: props.room.id } })
 }
 </script>
 

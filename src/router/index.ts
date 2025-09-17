@@ -11,8 +11,8 @@ const router = createRouter({
       component: RoomsListView,
     },
     {
-      path: '/rooms/:id',
-      name: 'room-detail',
+      path: '/property/:id',
+      name: 'property-detail',
       component: RoomDetailView,
       props: true,
     },
