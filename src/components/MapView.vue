@@ -26,7 +26,27 @@ function addMarkers() {
       .setLngLat(r.geometry.coordinates as [number, number])
       .setPopup(new maplibregl.Popup({ offset: 16 }).setText(r.name))
       .addTo(map)
-    marker.getElement().addEventListener('click', () => emit('select', r.id))
+
+    const el = marker.getElement()
+    // Show pointer on hover over the marker element
+    el.style.cursor = 'pointer'
+    // Slight color shift towards blue and more vivid on hover using Tailwind filters
+    el.classList.add(
+      'filter',
+      'transition',
+      'duration-150',
+      'hover:brightness-115',
+      'hover:saturate-160',
+      'hover:contrast-120',
+      'hover:hue-rotate-30',
+    )
+    el.addEventListener('mouseenter', () => {
+      if (map) map.getCanvas().style.cursor = 'pointer'
+    })
+    el.addEventListener('mouseleave', () => {
+      if (map) map.getCanvas().style.cursor = ''
+    })
+    el.addEventListener('click', () => emit('select', r.id))
     markers.push(marker)
   }
 }
