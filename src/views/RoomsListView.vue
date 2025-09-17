@@ -33,7 +33,8 @@ function changePage(p: number) {
 
     <div class="grid gap-4 md:grid-cols-2">
       <div class="space-y-3">
-        <RoomCard v-for="r in rooms" :key="r.id" :room="r" />
+        <RoomCard v-for="r in rooms" :key="r.id" :room="r" :query="query" />
+        <p v-if="rooms.length === 0" class="text-sm text-gray-600">Ничего не найдено.</p>
         <Pagination :current="page" :total="totalPages" @change="changePage" />
       </div>
       <div class="min-h-[400px]">

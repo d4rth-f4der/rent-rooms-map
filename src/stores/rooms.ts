@@ -15,6 +15,17 @@ export type Filters = {
   perPage: number
 }
 
+export const MIN_QUERY_LEN = 2
+
+function normalizeText(input: string): string {
+  // Lowercase, trim, collapse spaces, remove punctuation and diacritics
+  const lower = input.toLowerCase().trim()
+  const noDiacritics = lower.normalize('NFD').replace(/\p{Diacritic}+/gu, '')
+  const noPunct = noDiacritics.replace(/[^\p{L}\p{N}\s]+/gu, ' ')
+  const collapsed = noPunct.replace(/\s+/g, ' ').trim()
+  return collapsed
+}
+
 const mockRooms: Room[] = [
   {
     id: '1',
@@ -149,14 +160,18 @@ export const useRoomsStore = defineStore('rooms', {
   }),
   getters: {
     validatedQuery: (state) => state.filters.query.trim(),
+    queryTooShort(): boolean {
+      const q = this.validatedQuery
+      return q.length > 0 && q.length < MIN_QUERY_LEN
+    },
+    normalizedQuery(): string {
+      return normalizeText(this.validatedQuery)
+    },
     filteredRooms(state): Room[] {
-      const q = this.validatedQuery.toLowerCase()
-      if (!q || q.length < 2) return state.rooms
+      const q = this.normalizedQuery
+      if (!q || q.length < MIN_QUERY_LEN) return state.rooms
       return state.rooms.filter((r) =>
-        [r.name, r.location, r.description]
-          .join(' ')
-          .toLowerCase()
-          .includes(q)
+        normalizeText([r.name, r.location, r.description].join(' ')).includes(q)
       )
     },
     totalPages(): number {
