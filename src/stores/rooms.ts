@@ -2,13 +2,11 @@ import { defineStore } from 'pinia'
 
 export type Room = {
   id: string
-  title: string
-  address: string
+  name: string
+  description: string
   price: number
-  area: number
-  coords: [number, number] // [lng, lat]
-  tags?: string[]
-  description?: string
+  location: string
+  geometry: GeoJSON.Point
 }
 
 export type Filters = {
@@ -20,34 +18,37 @@ export type Filters = {
 const mockRooms: Room[] = [
   {
     id: '1',
-    title: 'Студия в центре',
-    address: 'ул. Центральная, 10',
+    name: 'Студия в центре',
+    description: 'Уютная студия в центре города.',
     price: 500,
-    area: 25,
-    coords: [30.5234, 50.4501],
-    tags: ['центр', 'студия'],
-    description: 'Уютная студия в центре города.'
+    location: 'ул. Центральная, 10',
+    geometry: {
+      type: 'Point',
+      coordinates: [30.5234, 50.4501],
+    },
   },
   {
     id: '2',
-    title: '2-комнатная у парка',
-    address: 'пр-т Свободы, 5',
+    name: '2-комнатная у парка',
+    description: 'Светлая квартира рядом с парком.',
     price: 700,
-    area: 48,
-    coords: [30.5239, 50.4512],
-    tags: ['парк', 'семья'],
-    description: 'Светлая квартира рядом с парком.'
+    location: 'пр-т Свободы, 5',
+    geometry: {
+      type: 'Point',
+      coordinates: [30.5239, 50.4512],
+    },
   },
   {
     id: '3',
-    title: 'Лофт с видом',
-    address: 'наб. Речная, 3',
+    name: 'Лофт с видом',
+    description: 'Стильный лофт с панорамными окнами.',
     price: 900,
-    area: 60,
-    coords: [30.5205, 50.4489],
-    tags: ['лофт', 'вид'],
-    description: 'Стильный лофт с панорамными окнами.'
-  }
+    location: 'наб. Речная, 3',
+    geometry: {
+      type: 'Point',
+      coordinates: [30.5205, 50.4489],
+    },
+  },
 ]
 
 export const useRoomsStore = defineStore('rooms', {
@@ -65,7 +66,7 @@ export const useRoomsStore = defineStore('rooms', {
       const q = this.validatedQuery.toLowerCase()
       if (!q || q.length < 2) return state.rooms
       return state.rooms.filter((r) =>
-        [r.title, r.address, ...(r.tags ?? [])]
+        [r.name, r.location, r.description]
           .join(' ')
           .toLowerCase()
           .includes(q)

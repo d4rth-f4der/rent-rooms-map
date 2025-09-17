@@ -22,16 +22,12 @@ function back() {
     <button class="text-blue-600 hover:underline" @click="back">← Назад к списку</button>
     <div v-if="room" class="grid gap-4 md:grid-cols-2">
       <div class="space-y-2">
-        <h1 class="text-2xl font-bold">{{ room.title }}</h1>
-        <p class="text-gray-600">{{ room.address }}</p>
+        <h1 class="text-2xl font-bold">{{ room.name }}</h1>
+        <p class="text-gray-600">{{ room.location }}</p>
         <div class="flex gap-4 text-lg">
           <div><span class="font-semibold">Цена:</span> ${{ room.price }}</div>
-          <div><span class="font-semibold">Площадь:</span> {{ room.area }} м²</div>
         </div>
         <p class="text-gray-700">{{ room.description }}</p>
-        <div class="mt-2 flex flex-wrap gap-2">
-          <span v-for="t in room.tags" :key="t" class="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">#{{ t }}</span>
-        </div>
       </div>
       <div class="min-h-[400px]">
         <MapView :rooms="[room]" />

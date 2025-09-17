@@ -11,7 +11,7 @@ const container = ref<HTMLDivElement | null>(null)
 let map: maplibregl.Map | null = null
 const markers: maplibregl.Marker[] = []
 
-const coords = computed(() => props.rooms.map(r => r.coords))
+const coords = computed(() => props.rooms.map(r => r.geometry.coordinates))
 
 function clearMarkers() {
   markers.forEach(m => m.remove())
@@ -23,8 +23,8 @@ function addMarkers() {
   clearMarkers()
   for (const r of props.rooms) {
     const marker = new maplibregl.Marker()
-      .setLngLat(r.coords)
-      .setPopup(new maplibregl.Popup({ offset: 16 }).setText(r.title))
+      .setLngLat(r.geometry.coordinates as [number, number])
+      .setPopup(new maplibregl.Popup({ offset: 16 }).setText(r.name))
       .addTo(map)
     marker.getElement().addEventListener('click', () => emit('select', r.id))
     markers.push(marker)
@@ -34,7 +34,7 @@ function addMarkers() {
 function fitToMarkers() {
   if (!map || props.rooms.length === 0) return
   const bounds = new maplibregl.LngLatBounds()
-  props.rooms.forEach(r => bounds.extend(r.coords as [number, number]))
+  props.rooms.forEach(r => bounds.extend(r.geometry.coordinates as [number, number]))
   try {
     map.fitBounds(bounds, { padding: 40, maxZoom: 15, duration: 300 })
   } catch {}
@@ -45,7 +45,7 @@ onMounted(() => {
   map = new maplibregl.Map({
     container: container.value,
     style: 'https://demotiles.maplibre.org/style.json',
-    center: props.rooms[0]?.coords ?? [30.5234, 50.4501],
+    center: (props.rooms[0]?.geometry.coordinates as [number, number]) ?? [30.5234, 50.4501],
     zoom: 12,
   })
   map.addControl(new maplibregl.NavigationControl(), 'top-right')

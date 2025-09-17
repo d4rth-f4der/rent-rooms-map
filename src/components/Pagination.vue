@@ -1,4 +1,5 @@
 <script setup lang="ts">
+defineOptions({ name: 'AppPagination' })
 const props = defineProps<{ current: number; total: number }>()
 const emit = defineEmits<{ (e: 'change', page: number): void }>()
 
