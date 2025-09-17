@@ -12,11 +12,11 @@ function to(page: number) {
 <template>
   <div class="flex items-center gap-2 mt-2" v-if="total > 1">
     <button class="px-3 py-1 rounded border hover:bg-gray-50" @click="to(current - 1)" :disabled="current === 1">
-      « Prev
+      « Попередня
     </button>
-    <span class="text-sm">Стр. {{ current }} из {{ total }}</span>
+    <span class="text-sm">Стор. {{ current }} з {{ total }}</span>
     <button class="px-3 py-1 rounded border hover:bg-gray-50" @click="to(current + 1)" :disabled="current === total">
-      Next »
+      Наступна »
     </button>
   </div>
 </template>

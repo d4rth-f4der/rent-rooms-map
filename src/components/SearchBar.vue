@@ -30,15 +30,15 @@ watch(
 
 <template>
   <div class="w-full">
-    <label class="block text-sm font-medium text-gray-700 mb-1">Поиск</label>
+    <label class="block text-sm font-medium text-gray-700 mb-1">Пошук</label>
     <input
       v-model="input"
       type="text"
-      :placeholder="`Введите минимум ${MIN_QUERY_LEN} символа...`"
+      :placeholder="`Введіть мінімум ${MIN_QUERY_LEN} символи...`"
       class="w-full rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
     />
     <p v-if="input && input.length > 0 && input.length < MIN_QUERY_LEN" class="mt-1 text-sm text-red-600">
-      Минимум {{ MIN_QUERY_LEN }} символа для поиска
+      Мінімум {{ MIN_QUERY_LEN }} символи для пошуку
     </p>
   </div>
 </template>

@@ -19,13 +19,13 @@ function back() {
 
 <template>
   <div class="container mx-auto p-4 space-y-4">
-    <button class="text-blue-600 hover:underline" @click="back">← Назад к списку</button>
+    <button class="text-blue-600 hover:underline" @click="back">← Назад до списку</button>
     <div v-if="room" class="grid gap-4 md:grid-cols-2">
       <div class="space-y-2">
         <h1 class="text-2xl font-bold">{{ room.name }}</h1>
         <p class="text-gray-600">{{ room.location }}</p>
         <div class="flex gap-4 text-lg">
-          <div><span class="font-semibold">Цена:</span> ${{ room.price }}</div>
+          <div><span class="font-semibold">Ціна:</span> ${{ room.price }}</div>
         </div>
         <p class="text-gray-700">{{ room.description }}</p>
       </div>
