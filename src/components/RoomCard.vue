@@ -36,7 +36,7 @@ function highlight(text: string, query?: string): string {
 <template>
   <div
     :id="`room-card-${room.id}`"
-    class="rounded-lg border p-3 shadow-sm hover:shadow-md transition cursor-pointer bg-white"
+    class="room-card rounded-lg border p-3 shadow-sm hover:shadow-lg transition-all duration-200 transform-gpu hover:-translate-y-0.5 cursor-pointer bg-white"
     @click="openDetail"
     @mouseenter="emit('hover', room.id)"
     @mouseleave="emit('hover', null)"

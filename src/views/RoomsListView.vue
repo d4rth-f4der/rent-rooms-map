@@ -6,6 +6,7 @@ import SearchBar from '@/components/SearchBar.vue'
 import Pagination from '@/components/Pagination.vue'
 import RoomCard from '@/components/RoomCard.vue'
 import MapView from '@/components/MapView.vue'
+import staggerAppear from '@/directives/staggerAppear'
 
 const store = useRoomsStore()
 const router = useRouter()
@@ -40,7 +41,7 @@ function onMarkerSelect(id: string) {
     <SearchBar v-model="query" />
 
     <div class="grid gap-3 md:grid-cols-2">
-      <div class="space-y-2">
+      <div class="space-y-2" v-stagger-appear="{ selector: ':scope > .room-card' }">
         <RoomCard
           v-for="r in rooms"
           :key="r.id"
@@ -63,3 +64,11 @@ function onMarkerSelect(id: string) {
 </template>
 
 <style scoped></style>
+
+<script lang="ts">
+export default {
+  directives: {
+    staggerAppear,
+  },
+}
+</script>
