@@ -17,6 +17,9 @@ const markerById: Record<string, maplibregl.Marker> = {}
 const internalHoveredId = ref<string | null>(null)
 let ro: ResizeObserver | null = null
 let resizeHandler: (() => void) | null = null
+let didInitialFit = false
+let readyTimer: ReturnType<typeof setTimeout> | null = null
+const isReady = ref(false)
 
 const coords = computed(() => props.rooms.map(r => r.geometry.coordinates))
 
@@ -71,12 +74,12 @@ function addMarkers() {
   }
 }
 
-function fitToMarkers() {
+function fitToMarkers(duration = 300) {
   if (!map || props.rooms.length === 0) return
   const bounds = new maplibregl.LngLatBounds()
   props.rooms.forEach(r => bounds.extend(r.geometry.coordinates as [number, number]))
   try {
-    map.fitBounds(bounds, { padding: 40, maxZoom: 15, duration: 300 })
+    map.fitBounds(bounds, { padding: 40, maxZoom: 15, duration })
   } catch {}
 }
 
@@ -111,9 +114,14 @@ onMounted(async () => {
   map.addControl(new maplibregl.NavigationControl(), 'top-right')
   map.on('load', () => {
     addMarkers()
-    fitToMarkers()
+    // Instant initial fit to avoid visible jump
+    fitToMarkers(0)
+    didInitialFit = true
     // Nudge map to recalc layout after styles/fonts load
     setTimeout(() => map?.resize(), 0)
+    // Mark ready early on first render for quicker reveal; also keep a short fallback
+    map?.once('render', () => { isReady.value = true })
+    readyTimer = setTimeout(() => { isReady.value = true }, 100)
   })
 
   // Resize handling: window resize and container size changes
@@ -138,12 +146,17 @@ onBeforeUnmount(() => {
     window.removeEventListener('resize', resizeHandler)
     resizeHandler = null
   }
+  if (readyTimer) {
+    clearTimeout(readyTimer)
+    readyTimer = null
+  }
 })
 
 watch(coords, () => {
   if (!map) return
   addMarkers()
-  fitToMarkers()
+  // animate after initial load only
+  fitToMarkers(didInitialFit ? 300 : 0)
 })
 
 // Helper to sync popups based on effective hover (list or marker)
@@ -171,7 +184,11 @@ watch(
 </script>
 
 <template>
-  <div ref="container" class="w-full h-full rounded-lg overflow-hidden border"></div>
+  <div class="w-full h-full rounded-lg overflow-hidden border bg-gray-100">
+    <div class="h-full transition-opacity duration-400" :class="{ 'opacity-0': !isReady, 'opacity-100': isReady }">
+      <div ref="container" class="w-full h-full"></div>
+    </div>
+  </div>
 </template>
 
 <style scoped>
