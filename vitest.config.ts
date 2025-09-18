@@ -1,9 +1,14 @@
 import { fileURLToPath } from 'node:url'
 import { mergeConfig, defineConfig, configDefaults } from 'vitest/config'
 import viteConfig from './vite.config'
+import type { UserConfig } from 'vite'
+
+const baseViteConfig: UserConfig = typeof viteConfig === 'function'
+  ? await viteConfig({ mode: 'test', command: 'serve' })
+  : (viteConfig as UserConfig)
 
 export default mergeConfig(
-  viteConfig,
+  baseViteConfig,
   defineConfig({
     test: {
       environment: 'jsdom',

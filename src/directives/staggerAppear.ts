@@ -40,13 +40,13 @@ function runOnce(el: HTMLElement, opts: Required<StaggerOptions>) {
       { duration: 200, delay: postDelay, easing: 'cubic-bezier(.2,.8,.2,1)', fill: 'none' },
     )
   })
-  ;(el as any).__stagger_done = true
+  ;(el as unknown as { __stagger_done?: boolean }).__stagger_done = true
   return true
 }
 
 const staggerAppear: Directive<HTMLElement, StaggerOptions | undefined> = {
   mounted(el, binding) {
-    if ((el as any).__stagger_done) return
+    if ((el as unknown as { __stagger_done?: boolean }).__stagger_done) return
 
     const raw = binding.value ?? {}
     const opts: Required<StaggerOptions> = {
@@ -59,21 +59,21 @@ const staggerAppear: Directive<HTMLElement, StaggerOptions | undefined> = {
     // Try immediately; if children are not rendered yet, observe once
     if (!runOnce(el, opts)) {
       const mo = new MutationObserver(() => {
-        if ((el as any).__stagger_done) return
+        if ((el as unknown as { __stagger_done?: boolean }).__stagger_done) return
         if (runOnce(el, opts)) {
           mo.disconnect()
-          ;(el as any).__stagger_observer = undefined
+          ;(el as unknown as { __stagger_observer?: MutationObserver }).__stagger_observer = undefined
         }
       })
       mo.observe(el, { childList: true })
-      ;(el as any).__stagger_observer = mo
+      ;(el as unknown as { __stagger_observer?: MutationObserver }).__stagger_observer = mo
     }
   },
-  updated(el) {
+  updated() {
     // No-op; we run only once
   },
   beforeUnmount(el) {
-    const mo: MutationObserver | undefined = (el as any).__stagger_observer
+    const mo: MutationObserver | undefined = (el as unknown as { __stagger_observer?: MutationObserver }).__stagger_observer
     if (mo) mo.disconnect()
   },
 }
