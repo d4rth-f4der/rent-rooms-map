@@ -18,7 +18,6 @@ export type Filters = {
 export const MIN_QUERY_LEN = 2
 
 function normalizeText(input: string): string {
-  // Lowercase, trim, collapse spaces, remove punctuation and diacritics
   const lower = input.toLowerCase().trim()
   const noDiacritics = lower.normalize('NFD').replace(/\p{Diacritic}+/gu, '')
   const noPunct = noDiacritics.replace(/[^\p{L}\p{N}\s]+/gu, ' ')

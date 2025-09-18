@@ -7,7 +7,6 @@ const emit = defineEmits<{ (e: 'update:modelValue', value: string): void }>()
 
 const input = ref(props.modelValue)
 
-// Sync down when external model changes
 watch(
   () => props.modelValue,
   (v) => {
@@ -15,7 +14,6 @@ watch(
   },
 )
 
-// Debounced emit up
 let t: ReturnType<typeof setTimeout> | null = null
 watch(
   input,

@@ -12,7 +12,7 @@ function runOnce(el: HTMLElement, opts: Required<StaggerOptions>) {
   if (items.length === 0) return false
   items.forEach((node, i) => {
     const delay = i * opts.step
-    // Transform + slight brightness settles at the base duration
+
     node.animate(
       [
         { transform: 'translateY(10px) scale(0.985)', filter: 'brightness(0.985)' },
@@ -20,7 +20,7 @@ function runOnce(el: HTMLElement, opts: Required<StaggerOptions>) {
       ],
       { duration: opts.duration, delay, easing: opts.easing, fill: 'both' },
     )
-    // Opacity fades a bit longer for a smoother feel, without changing overall step cadence
+
     node.animate(
       [
         { opacity: 0 },
@@ -29,7 +29,6 @@ function runOnce(el: HTMLElement, opts: Required<StaggerOptions>) {
       { duration: opts.duration + 180, delay, easing: opts.easing, fill: 'both' },
     )
 
-    // After appearing, add a tiny micro-bounce to give a lively feel
     const postDelay = delay + (opts.duration + 0) + 1
     node.animate(
       [
@@ -56,7 +55,6 @@ const staggerAppear: Directive<HTMLElement, StaggerOptions | undefined> = {
       easing: raw.easing ?? 'cubic-bezier(.16,.84,.44,1)',
     }
 
-    // Try immediately; if children are not rendered yet, observe once
     if (!runOnce(el, opts)) {
       const mo = new MutationObserver(() => {
         if ((el as unknown as { __stagger_done?: boolean }).__stagger_done) return
@@ -70,7 +68,7 @@ const staggerAppear: Directive<HTMLElement, StaggerOptions | undefined> = {
     }
   },
   updated() {
-    // No-op; we run only once
+
   },
   beforeUnmount(el) {
     const mo: MutationObserver | undefined = (el as unknown as { __stagger_observer?: MutationObserver }).__stagger_observer

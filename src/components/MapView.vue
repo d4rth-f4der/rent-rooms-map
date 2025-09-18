@@ -39,9 +39,7 @@ function addMarkers() {
       .addTo(map)
 
     const el = marker.getElement()
-    // Show pointer on hover over the marker element
     el.style.cursor = 'pointer'
-    // Slight color shift towards blue and more vivid on hover using Tailwind filters
     el.classList.add(
       'filter',
       'transition',
@@ -53,14 +51,12 @@ function addMarkers() {
     )
     el.addEventListener('mouseenter', () => {
       if (map) map.getCanvas().style.cursor = 'pointer'
-      // Track internal hover and open popup
       internalHoveredId.value = r.id
       updatePopups()
       emit('hover-marker', r.id)
     })
     el.addEventListener('mouseleave', () => {
       if (map) map.getCanvas().style.cursor = ''
-      // Clear internal hover only if leaving this marker
       if (internalHoveredId.value === r.id) internalHoveredId.value = null
       updatePopups()
       emit('hover-marker', null)
@@ -85,7 +81,6 @@ function fitToMarkers(duration = 300) {
 
 onMounted(async () => {
   if (!container.value) return
-  // Ensure DOM has laid out before initializing map
   await nextTick()
   map = new maplibregl.Map({
     container: container.value,
