@@ -103,14 +103,11 @@ npm run lint
 
 ## 🚀 Деплой на Netlify
 
-Проект готовий для деплою на Netlify:
+Налаштування деплою на Netlify:
 
-1. Пуште код в бранч `prod`
-2. Підключіть репозиторій в Netlify
-3. Налаштування:
-   - Build command: `npm run build`
-   - Publish directory: `dist`
-   - Environment: `NODE_VERSION=20`
+- Build command: `npm run build`
+- Publish directory: `dist`
+- Environment: `NODE_VERSION=20`
 
 Файл `netlify.toml` вже налаштований для SPA-редиректів.
 
